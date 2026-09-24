@@ -1,0 +1,47 @@
+--- src/components/GoreboxGame3D.tsx
++++ src/components/GoreboxGame3D.tsx
+@@ -924,24 +924,20 @@
+ 
+           if (foundRagdollId && foundParticleId) {
+             if (isPaintMode) {
+-              const p = engine.ragdolls.find((r) => r.id === foundRagdollId)?.particles.find((p) => p.id === foundParticleId);
+-              if (p && p.mesh) {
+-                const localHitPos = p.mesh.worldToLocal(hit.point.clone());
+-                
+-                // Account for parent mesh scale so it doesn't get distorted or shrunk
+-                const parentScale = p.mesh.scale;
+-                const invScaleX = 1 / parentScale.x;
+-                const invScaleY = 1 / parentScale.y;
+-                const invScaleZ = 1 / parentScale.z;
+-
+-                const sphereGeom = new THREE.SphereGeometry(0.12, 12, 12);
+-                const sphereMat = new THREE.MeshStandardMaterial({
+-                  color: 0x990000,
+-                  roughness: 0.2,
+-                  metalness: 0.1
+-                });
+-                const bloodDecal = new THREE.Mesh(sphereGeom, sphereMat);
+-                bloodDecal.position.copy(localHitPos);
+-                bloodDecal.scale.set(invScaleX, invScaleY, invScaleZ);
+-                p.mesh.add(bloodDecal);
+-              }
++              const rd = engine.ragdolls.find((r) => r.id === foundRagdollId);
++              const p = rd?.particles.find((p) => p.id === foundParticleId);
++              if (p) {
++                if (p.contourMesh) {
++                  if (!p.contourMesh.userData.holes) p.contourMesh.userData.holes = [];
++                  const localPos = p.contourMesh.worldToLocal(hit.point.clone());
++                  p.contourMesh.userData.holes.push({
++                    pos: localPos,
++                    radius: 0.06
++                  });
++                  p.contourMesh.userData.needsDeform = true;
++                }
++                if (p.mesh) {
++                  const normal = hit.face?.normal?.clone().transformDirection(hit.object.matrixWorld).normalize() || new THREE.Vector3(0, 1, 0);
++                  engine.bulletHoleManager.spawnBulletHole(hit.point.clone(), normal, 0.08, false, p.mesh, false);
++                }
++              }
+               
+               foundPart = true;
+               break;

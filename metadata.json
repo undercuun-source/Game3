@@ -1,0 +1,8 @@
+{
+  "name": "Remix Game 88",
+  "description": "Juego de acción y física 3D con extremidades compuestas por múltiples cubos destructibles tiro a tiro, capa pseudo-3D de contorno esférico ajustable (0-100), sangre cúbica 3D y controles táctile",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

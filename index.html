@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Remix Remix Remix Luurbia 4</title>
+    <meta name="description" content="Juego de acción y física 3D con extremidades compuestas por múltiples cubos destructibles tiro a tiro, capa pseudo-3D de contorno esférico ajustable (0-100), sangre cúbica 3D y controles táctile" />
+    <meta property="og:title" content="Remix Remix Remix Luurbia 4" />
+    <meta property="og:description" content="Juego de acción y física 3D con extremidades compuestas por múltiples cubos destructibles tiro a tiro, capa pseudo-3D de contorno esférico ajustable (0-100), sangre cúbica 3D y controles táctile" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      // Google Cloud VPS Security: Prevent F12, Inspect Element, and DevTools inspection
+      (function() {
+        document.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+        });
+        document.addEventListener('keydown', function(e) {
+          if (
+            e.key === 'F12' ||
+            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
+            (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's'))
+          ) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+          }
+        });
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

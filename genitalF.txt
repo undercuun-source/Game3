@@ -1,0 +1,351 @@
+          for (let iy = -2; iy <= 2; iy++) {
+            for (let iz = 0; iz < nLz; iz++) {
+              if (ix === 0) continue;
+              const lx = ix * vxW;
+              const ly = rootY + iy * vxH;
+              const lz = femaleRootZ + iz * vxD;
+
+              const blockGeom = new THREE.BoxGeometry(vxW * 0.95, vxH * 0.95, vxD * 0.95);
+              const blockMesh = new THREE.Mesh(blockGeom, skinMat);
+              blockMesh.position.set(lx * reproScale, rootY + (ly - rootY) * reproScale, 0.10 + (lz - 0.10) * reproScale);
+              blockMesh.scale.set(reproScale, reproScale, reproScale);
+              blockMesh.renderOrder = 16;
+              blockMesh.name = ix < 0 ? 'female_labia_mesh_l' : 'female_labia_mesh_r';
+              genitalGroup.add(blockMesh);
+
+              pelvis.voxelBlocks.push({
+                id: `genital_female_labia_vox_${ix}_${iy}_${iz}`,
+                localPos: blockMesh.position.clone(),
+                size: [vxW * reproScale, vxH * reproScale, vxD * reproScale],
+                color: ragdoll.skinColorHex,
+                originalColor: ragdoll.skinColorHex,
+                active: true,
+                mesh: blockMesh,
+                isContour: false,
+                isGenitalBlock: true,
+                gridIndex: [ix + 1, iy + 2, iz],
+              });
+            }
+          }
+        }
+
+        // --- FEMALE GENITAL PINK ANATOMY ("LA PARTE ROSA") ---
+        // 1. Clitoris & Capuchón (Pink Clitoral Hood and Glans Sphere at top central junction)
+        const clitW = 0.008 * fSizeMultiplier, clitH = 0.010 * fSizeMultiplier, clitD = 0.012 * fSizeMultiplier;
+        const clitGeom = new THREE.BoxGeometry(clitW, clitH, clitD);
+        const clitMesh = new THREE.Mesh(clitGeom, pinkMat);
+        clitMesh.position.set(0, (rootY + 0.025 * fSizeMultiplier) * reproScale, 0.10 + (femaleRootZ + 0.008 * fSizeMultiplier - 0.10) * reproScale);
+        clitMesh.scale.set(reproScale, reproScale, reproScale);
+        clitMesh.renderOrder = 18;
+        clitMesh.name = 'female_clitoris_mesh';
+        genitalGroup.add(clitMesh);
+
+        // Clitoral Glans Head Sphere
+        const clitGlansRadius = 0.006 * fSizeMultiplier;
+        const clitGlansGeom = new THREE.SphereGeometry(clitGlansRadius, 16, 16);
+        const clitGlansMesh = new THREE.Mesh(clitGlansGeom, pinkMat);
+        clitGlansMesh.position.set(0, (rootY + 0.027 * fSizeMultiplier) * reproScale, 0.10 + (femaleRootZ + 0.012 * fSizeMultiplier - 0.10) * reproScale);
+        clitGlansMesh.scale.set(reproScale, reproScale, reproScale);
+        clitGlansMesh.renderOrder = 19;
+        clitGlansMesh.name = 'female_clitoris_glans_sphere';
+        genitalGroup.add(clitGlansMesh);
+
+        pelvis.voxelBlocks.push({
+          id: 'genital_female_clitoris_block',
+          localPos: clitMesh.position.clone(),
+          size: [clitW * reproScale, clitH * reproScale, clitD * reproScale],
+          color: 0xf43f5e,
+          originalColor: 0xf43f5e,
+          active: true,
+          mesh: clitMesh,
+          isContour: false,
+          isGenitalBlock: true,
+          isOrganBlock: true,
+          gridIndex: [0, 0, 0],
+        });
+
+        // 2. Inner Labia Minora (Labios Menores - Slender Pink Strips)
+        const minoraW = 0.005 * fSizeMultiplier, minoraH = 0.042 * fSizeMultiplier, minoraD = 0.012 * fSizeMultiplier;
+        const minoraGeom = new THREE.BoxGeometry(minoraW, minoraH, minoraD);
+
+        const minoraL = new THREE.Mesh(minoraGeom, pinkMat);
+        minoraL.position.set(-0.005 * fSizeMultiplier * reproScale, rootY * reproScale, 0.10 + (femaleRootZ + 0.006 * fSizeMultiplier - 0.10) * reproScale);
+        minoraL.scale.set(reproScale, reproScale, reproScale);
+        minoraL.renderOrder = 18;
+        minoraL.name = 'female_labia_minora_mesh_l';
+        genitalGroup.add(minoraL);
+
+        pelvis.voxelBlocks.push({
+          id: 'genital_female_labia_minora_l_block',
+          localPos: minoraL.position.clone(),
+          size: [minoraW * reproScale, minoraH * reproScale, minoraD * reproScale],
+          color: 0xf43f5e,
+          originalColor: 0xf43f5e,
+          active: true,
+          mesh: minoraL,
+          isContour: false,
+          isGenitalBlock: true,
+          isOrganBlock: true,
+          gridIndex: [0, 0, 0],
+        });
+
+        const minoraR = new THREE.Mesh(minoraGeom, pinkMat);
+        minoraR.position.set(0.005 * fSizeMultiplier * reproScale, rootY * reproScale, 0.10 + (femaleRootZ + 0.006 * fSizeMultiplier - 0.10) * reproScale);
+        minoraR.scale.set(reproScale, reproScale, reproScale);
+        minoraR.renderOrder = 18;
+        minoraR.name = 'female_labia_minora_mesh_r';
+        genitalGroup.add(minoraR);
+
+        pelvis.voxelBlocks.push({
+          id: 'genital_female_labia_minora_r_block',
+          localPos: minoraR.position.clone(),
+          size: [minoraW * reproScale, minoraH * reproScale, minoraD * reproScale],
+          color: 0xf43f5e,
+          originalColor: 0xf43f5e,
+          active: true,
+          mesh: minoraR,
+          isContour: false,
+          isGenitalBlock: true,
+          isOrganBlock: true,
+          gridIndex: [0, 0, 0],
+        });
+
+        // 3. Vaginal Entrance & Vestibule (Entrada Rosa Central)
+        const nE = 5;
+        const evxW = entW / 3;
+        const evxH = entH / nE;
+        const evxD = entD;
+
+        for (let ix = -1; ix <= 1; ix++) {
+          for (let iy = -2; iy <= 2; iy++) {
+            if (ix === 0 && iy === 0) continue;
+            const lx = ix * evxW;
+            const ly = rootY + iy * evxH;
+            const lz = femaleRootZ - 0.005;
+
+            const blockGeom = new THREE.BoxGeometry(evxW * 0.95, evxH * 0.95, evxD * 0.95);
+            const blockMesh = new THREE.Mesh(blockGeom, pinkMat);
+            blockMesh.position.set(lx * reproScale, rootY + (ly - rootY) * reproScale, 0.10 + (lz - 0.10) * reproScale);
+            blockMesh.scale.set(reproScale, reproScale, reproScale);
+            blockMesh.renderOrder = 16;
+            blockMesh.name = 'female_entrance_mesh';
+            genitalGroup.add(blockMesh);
+
+            pelvis.voxelBlocks.push({
+              id: `genital_female_entrance_vox_${ix}_${iy}`,
+              localPos: blockMesh.position.clone(),
+              size: [evxW * reproScale, evxH * reproScale, evxD * reproScale],
+              color: 0xf43f5e,
+              originalColor: 0xf43f5e,
+              active: true,
+              mesh: blockMesh,
+              isContour: false,
+              isGenitalBlock: true,
+              gridIndex: [ix + 1, iy + 2, 0],
+            });
+          }
+        }
+
+        // Flat, sleek box contour meshes that stay flush and compact
+        const createFlatFemaleContourMesh = (cName: string, w: number, h: number, d: number, color: number) => {
+          const geom = new THREE.BoxGeometry(w, h, d);
+          const mat = new THREE.MeshStandardMaterial({
+            color: color,
+            roughness: 0.50,
+            metalness: 0.05,
+            polygonOffset: true,
+            polygonOffsetFactor: -1.0,
+            polygonOffsetUnits: -1.0,
+          });
+          const m = new THREE.Mesh(geom, mat);
+          m.name = `female_flat_contour_${cName}`;
+          return m;
+        };
+
+        const labiaLPseudo = createFlatFemaleContourMesh('labio_izq', labiaW * 1.10, labiaH * 1.02, labiaD * 1.05, ragdoll.skinColorHex);
+        labiaLPseudo.position.set(-0.012 * fSizeMultiplier * reproScale, rootY * reproScale, 0.10 + (femaleRootZ - 0.10) * reproScale);
+        labiaLPseudo.scale.set(reproScale, reproScale, reproScale);
+        labiaLPseudo.renderOrder = 17;
+        labiaLPseudo.name = 'female_labia_pseudo_l';
+        genitalGroup.add(labiaLPseudo);
+
+        const labiaRPseudo = createFlatFemaleContourMesh('labio_der', labiaW * 1.10, labiaH * 1.02, labiaD * 1.05, ragdoll.skinColorHex);
+        labiaRPseudo.position.set(0.012 * fSizeMultiplier * reproScale, rootY * reproScale, 0.10 + (femaleRootZ - 0.10) * reproScale);
+        labiaRPseudo.scale.set(reproScale, reproScale, reproScale);
+        labiaRPseudo.renderOrder = 17;
+        labiaRPseudo.name = 'female_labia_pseudo_r';
+        genitalGroup.add(labiaRPseudo);
+
+        const entrancePseudo = createFlatFemaleContourMesh('entrada_femenina', entW * 1.10, entH * 1.02, entD * 1.05, 0xf43f5e);
+        entrancePseudo.position.set(0, rootY * reproScale, 0.10 + ((femaleRootZ - 0.002) - 0.10) * reproScale);
+        entrancePseudo.scale.set(reproScale, reproScale, reproScale);
+        entrancePseudo.renderOrder = 17;
+        entrancePseudo.name = 'female_entrance_pseudo';
+        genitalGroup.add(entrancePseudo);
+
+        // Add sleek, thin cylinders to labia side bridges
+        const labiaCylRadius = 0.005 * fSizeMultiplier;
+        const labiaCylGeom = new THREE.CylinderGeometry(labiaCylRadius, labiaCylRadius, labiaH, 16, 1);
+
+        const cylLabiaL = new THREE.Mesh(labiaCylGeom, skinMat);
+        cylLabiaL.position.set(-0.014 * fSizeMultiplier * reproScale, rootY * reproScale, 0.10 + (femaleRootZ - 0.10) * reproScale);
+        cylLabiaL.scale.set(reproScale, reproScale, reproScale);
+        cylLabiaL.name = 'female_labia_cyl_l';
+        cylLabiaL.renderOrder = 16;
+        genitalGroup.add(cylLabiaL);
+
+        pelvis.voxelBlocks.push({
+          id: 'genital_female_labia_cylinder_l_block',
+          localPos: cylLabiaL.position.clone(),
+          size: [labiaCylRadius * 2 * reproScale, labiaH * reproScale, labiaCylRadius * 2 * reproScale],
+          color: ragdoll.skinColorHex,
+          originalColor: ragdoll.skinColorHex,
+          active: true,
+          mesh: cylLabiaL,
+          isContour: false,
+          isGenitalBlock: true,
+          gridIndex: [0, 0, 0]
+        });
+
+        const cylLabiaR = new THREE.Mesh(labiaCylGeom, skinMat);
+        cylLabiaR.position.set(0.014 * fSizeMultiplier * reproScale, rootY * reproScale, 0.10 + (femaleRootZ - 0.10) * reproScale);
+        cylLabiaR.scale.set(reproScale, reproScale, reproScale);
+        cylLabiaR.name = 'female_labia_cyl_r';
+        cylLabiaR.renderOrder = 16;
+        genitalGroup.add(cylLabiaR);
+
+        pelvis.voxelBlocks.push({
+          id: 'genital_female_labia_cylinder_r_block',
+          localPos: cylLabiaR.position.clone(),
+          size: [labiaCylRadius * 2 * reproScale, labiaH * reproScale, labiaCylRadius * 2 * reproScale],
+          color: ragdoll.skinColorHex,
+          originalColor: ragdoll.skinColorHex,
+          active: true,
+          mesh: cylLabiaR,
+          isContour: false,
+          isGenitalBlock: true,
+          gridIndex: [0, 0, 0]
+        });
+
+        // Connect female genital elements smoothly with delicate thin tube radii
+        const pLabiaL = labiaLPseudo.position.clone();
+        const pLabiaR = labiaRPseudo.position.clone();
+        const pEntrance = entrancePseudo.position.clone();
+        const pGroinBase = new THREE.Vector3(0, rootY * reproScale, 0.10 + (femaleRootZ - 0.05 - 0.10) * reproScale);
+        const fConnRadius = 0.004 * fSizeMultiplier * reproScale;
+
+        const connFemaleLToR = connectWithCylinder(
+          pLabiaL,
+          pLabiaR,
+          fConnRadius,
+          fConnRadius,
+          skinMat,
+          'female_labia_bridge_cylinder'
+        );
+        if (connFemaleLToR) {
+          genitalGroup.add(connFemaleLToR);
+          pelvis.voxelBlocks.push({
+            id: 'genital_female_labia_bridge_cylinder_block',
+            localPos: new THREE.Vector3(0, rootY, femaleRootZ),
+            size: [0.02 * fSizeMultiplier, fConnRadius * 2, fConnRadius * 2],
+            color: ragdoll.skinColorHex,
+            originalColor: ragdoll.skinColorHex,
+            active: true,
+            mesh: connFemaleLToR,
+            isContour: false,
+            isGenitalBlock: true,
+            gridIndex: [0, 0, 0]
+          });
+        }
+
+        const connFemaleLToEntrance = connectWithCylinder(
+          pLabiaL,
+          pEntrance,
+          fConnRadius,
+          fConnRadius,
+          skinMat,
+          'female_labia_l_to_entrance_cylinder'
+        );
+        if (connFemaleLToEntrance) {
+          genitalGroup.add(connFemaleLToEntrance);
+          pelvis.voxelBlocks.push({
+            id: 'genital_female_labia_l_to_entrance_cylinder_block',
+            localPos: new THREE.Vector3(-0.008 * fSizeMultiplier, rootY, femaleRootZ),
+            size: [fConnRadius * 2, fConnRadius * 2, fConnRadius * 2],
+            color: ragdoll.skinColorHex,
+            originalColor: ragdoll.skinColorHex,
+            active: true,
+            mesh: connFemaleLToEntrance,
+            isContour: false,
+            isGenitalBlock: true,
+            gridIndex: [0, 0, 0]
+          });
+        }
+
+        const connFemaleRToEntrance = connectWithCylinder(
+          pLabiaR,
+          pEntrance,
+          fConnRadius,
+          fConnRadius,
+          skinMat,
+          'female_labia_r_to_entrance_cylinder'
+        );
+        if (connFemaleRToEntrance) {
+          genitalGroup.add(connFemaleRToEntrance);
+          pelvis.voxelBlocks.push({
+            id: 'genital_female_labia_r_to_entrance_cylinder_block',
+            localPos: new THREE.Vector3(0.008 * fSizeMultiplier, rootY, femaleRootZ),
+            size: [fConnRadius * 2, fConnRadius * 2, fConnRadius * 2],
+            color: ragdoll.skinColorHex,
+            originalColor: ragdoll.skinColorHex,
+            active: true,
+            mesh: connFemaleRToEntrance,
+            isContour: false,
+            isGenitalBlock: true,
+            gridIndex: [0, 0, 0]
+          });
+        }
+
+        const connFemaleEntranceToGroin = connectWithCylinder(
+          pEntrance,
+          pGroinBase,
+          fConnRadius,
+          fConnRadius,
+          pinkMat,
+          'female_entrance_to_groin_cylinder'
+        );
+        if (connFemaleEntranceToGroin) {
+          genitalGroup.add(connFemaleEntranceToGroin);
+          pelvis.voxelBlocks.push({
+            id: 'genital_female_entrance_to_groin_cylinder_block',
+            localPos: new THREE.Vector3(0, rootY, femaleRootZ - 0.02 * fSizeMultiplier),
+            size: [fConnRadius * 2, fConnRadius * 2, fConnRadius * 2],
+            color: 0xf43f5e,
+            originalColor: 0xf43f5e,
+            active: true,
+            mesh: connFemaleEntranceToGroin,
+            isContour: false,
+            isGenitalBlock: true,
+            gridIndex: [0, 0, 0]
+          });
+        }
+
+        const fTubeStartY = rootY;
+        const fTubeStartZ = femaleRootZ - 0.005;
+        const fTubeEndY = 0.08;
+        const fTubeEndZ = 0.012;
+        const fTubeLength = Math.sqrt((fTubeEndY - fTubeStartY) ** 2 + (fTubeEndZ - fTubeStartZ) ** 2);
+        const fTubeW = 0.018 * fSizeMultiplier;
+        const fTubeD = 0.018 * fSizeMultiplier;
+
+        const fTubeMat = new THREE.MeshStandardMaterial({
+          color: 0xf472b6,
+          roughness: 0.35,
+          emissive: 0xdb2777,
+          emissiveIntensity: 0.4,
+        });
+
+        const fCanalMesh = new THREE.Group() as any;
+        fCanalMesh.name = 'female_internal_tube';
+
+        const wallThick = 0.004 * fSizeMultiplier;

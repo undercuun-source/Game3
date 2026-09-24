@@ -1,0 +1,321 @@
+        seg1.name = 'male_shaft_segment_1';
+        erectionPivot.add(seg1);
+
+        const seg2 = new THREE.Group();
+        seg2.name = 'male_shaft_segment_2';
+        erectionPivot.add(seg2);
+
+        const nx = 3, nz = 3;
+        const ny = Math.max(3, Math.round(8 * shaftLenMultiplier));
+
+        for (let ix = -1; ix <= 1; ix++) {
+          for (let iy = 0; iy < ny; iy++) {
+            for (let iz = -1; iz <= 1; iz++) {
+              if (ix === 0 && iz === 0) continue;
+              const vxW = shaftW / 3;
+              const vxH = shaftLength / ny;
+              const vxD = shaftD / 3;
+              const lx = ix * vxW;
+              const ly = -(iy + 0.5) * vxH; // Relative to pivot
+              const lz = iz * vxD; // Relative to pivot
+
+              const blockGeom = new THREE.BoxGeometry(vxW * 0.95, vxH * 0.95, vxD * 0.95);
+              const blockMesh = new THREE.Mesh(blockGeom, skinMat);
+              blockMesh.position.set(lx, ly, lz);
+              blockMesh.renderOrder = 16;
+              blockMesh.name = 'male_shaft_mesh';
+              
+              const segIndex = Math.min(2, Math.floor((iy / ny) * 3));
+              if (segIndex === 0) seg0.add(blockMesh);
+              else if (segIndex === 1) seg1.add(blockMesh);
+              else seg2.add(blockMesh);
+
+              pelvis.voxelBlocks.push({
+                id: `genital_male_shaft_vox_${ix}_${iy}_${iz}`,
+                localPos: new THREE.Vector3(lx, ly + rootY, lz + genitalFrontZ),
+                size: [vxW, vxH, vxD],
+                color: ragdoll.skinColorHex,
+                originalColor: ragdoll.skinColorHex,
+                active: true,
+                mesh: blockMesh,
+                isContour: false,
+                isGenitalBlock: true,
+                gridIndex: [ix + 1, iy, iz + 1],
+              });
+            }
+          }
+        }
+
+        // Build 3 distinct segments, each with its own pseudo-3D contour layer
+        const segmentLength = shaftLength / 3;
+        for (let s = 0; s < 3; s++) {
+          const segPseudo = createPseudo3DContourMesh(
+            `male_shaft_${s}` as BodyPartName,
+            shaftW * 1.3,
+            segmentLength * 1.05,
+            shaftD * 1.3,
+            ragdoll.sphericalContourLevel,
+            ragdoll.skinColorHex
+          );
+          segPseudo.name = 'male_shaft_pseudo';
+          segPseudo.position.set(0, -(s + 0.5) * segmentLength, 0); // Relative to pivot
+          segPseudo.renderOrder = 17;
+          if (segPseudo.material instanceof THREE.MeshStandardMaterial) {
+            segPseudo.material.polygonOffset = true;
+            segPseudo.material.polygonOffsetFactor = -1.0;
+            segPseudo.material.polygonOffsetUnits = -1.0;
+          }
+          if (s === 0) seg0.add(segPseudo);
+          else if (s === 1) seg1.add(segPseudo);
+          else seg2.add(segPseudo);
+        }
+
+        // Build 3 continuous, solid cylinder meshes to represent the penis shaft ("palo") beautifully
+        const cyl0Geom = new THREE.CylinderGeometry(shaftW * 0.48, shaftW * 0.48, segmentLength, 16, 1);
+        const cyl0 = new THREE.Mesh(cyl0Geom, skinMat);
+        cyl0.position.set(0, -0.5 * segmentLength, 0);
+        cyl0.name = 'male_shaft_cyl_0';
+        cyl0.renderOrder = 16;
+        seg0.add(cyl0);
+
+        pelvis.voxelBlocks.push({
+          id: 'genital_male_shaft_cylinder_0_block',
+          localPos: new THREE.Vector3(0, -0.5 * segmentLength + rootY, genitalFrontZ),
+          size: [shaftW, segmentLength, shaftD],
+          color: ragdoll.skinColorHex,
+          originalColor: ragdoll.skinColorHex,
+          active: true,
+          mesh: cyl0,
+          isContour: false,
+          isGenitalBlock: true,
+          gridIndex: [0, 0, 0]
+        });
+
+        const cyl1Geom = new THREE.CylinderGeometry(shaftW * 0.48, shaftW * 0.48, segmentLength, 16, 1);
+        const cyl1 = new THREE.Mesh(cyl1Geom, skinMat);
+        cyl1.position.set(0, -1.5 * segmentLength, 0);
+        cyl1.name = 'male_shaft_cyl_1';
+        cyl1.renderOrder = 16;
+        seg1.add(cyl1);
+
+        pelvis.voxelBlocks.push({
+          id: 'genital_male_shaft_cylinder_1_block',
+          localPos: new THREE.Vector3(0, -1.5 * segmentLength + rootY, genitalFrontZ),
+          size: [shaftW, segmentLength, shaftD],
+          color: ragdoll.skinColorHex,
+          originalColor: ragdoll.skinColorHex,
+          active: true,
+          mesh: cyl1,
+          isContour: false,
+          isGenitalBlock: true,
+          gridIndex: [0, 0, 0]
+        });
+
+        const cyl2Geom = new THREE.CylinderGeometry(shaftW * 0.48, shaftW * 0.48, segmentLength, 16, 1);
+        const cyl2 = new THREE.Mesh(cyl2Geom, skinMat);
+        cyl2.position.set(0, -2.5 * segmentLength, 0);
+        cyl2.name = 'male_shaft_cyl_2';
+        cyl2.renderOrder = 16;
+        seg2.add(cyl2);
+
+        pelvis.voxelBlocks.push({
+          id: 'genital_male_shaft_cylinder_2_block',
+          localPos: new THREE.Vector3(0, -2.5 * segmentLength + rootY, genitalFrontZ),
+          size: [shaftW, segmentLength, shaftD],
+          color: ragdoll.skinColorHex,
+          originalColor: ragdoll.skinColorHex,
+          active: true,
+          mesh: cyl2,
+          isContour: false,
+          isGenitalBlock: true,
+          gridIndex: [0, 0, 0]
+        });
+
+        // Connect the 8 outer columns of the shaft in each of the 3 segments with cylinder meshes
+        // to make the shaft ("palo") robustly cylindrical and connected even when voxel shape is 'sphere'!
+        for (let ix = -1; ix <= 1; ix++) {
+          for (let iz = -1; iz <= 1; iz++) {
+            if (ix === 0 && iz === 0) continue;
+            const colX = ix * (shaftW / 3);
+            const colZ = iz * (shaftD / 3);
+            const colRadius = (shaftW / 3) * 0.45;
+
+            // Cylinder column for Segment 0
+            const cylSeg0Geom = new THREE.CylinderGeometry(colRadius, colRadius, segmentLength, 12, 1);
+            const cylSeg0Mesh = new THREE.Mesh(cylSeg0Geom, skinMat);
+            cylSeg0Mesh.position.set(colX, -0.5 * segmentLength, colZ);
+            cylSeg0Mesh.name = `male_shaft_col_cyl_0_${ix}_${iz}`;
+            cylSeg0Mesh.renderOrder = 16;
+            seg0.add(cylSeg0Mesh);
+
+            pelvis.voxelBlocks.push({
+              id: `genital_male_shaft_col_cylinder_0_${ix}_${iz}_block`,
+              localPos: new THREE.Vector3(colX, -0.5 * segmentLength + rootY, colZ + genitalFrontZ),
+              size: [shaftW / 3, segmentLength, shaftD / 3],
+              color: ragdoll.skinColorHex,
+              originalColor: ragdoll.skinColorHex,
+              active: true,
+              mesh: cylSeg0Mesh,
+              isContour: false,
+              isGenitalBlock: true,
+              gridIndex: [ix + 1, 0, iz + 1]
+            });
+
+            // Cylinder column for Segment 1
+            const cylSeg1Geom = new THREE.CylinderGeometry(colRadius, colRadius, segmentLength, 12, 1);
+            const cylSeg1Mesh = new THREE.Mesh(cylSeg1Geom, skinMat);
+            cylSeg1Mesh.position.set(colX, -1.5 * segmentLength, colZ);
+            cylSeg1Mesh.name = `male_shaft_col_cyl_1_${ix}_${iz}`;
+            cylSeg1Mesh.renderOrder = 16;
+            seg1.add(cylSeg1Mesh);
+
+            pelvis.voxelBlocks.push({
+              id: `genital_male_shaft_col_cylinder_1_${ix}_${iz}_block`,
+              localPos: new THREE.Vector3(colX, -1.5 * segmentLength + rootY, colZ + genitalFrontZ),
+              size: [shaftW / 3, segmentLength, shaftD / 3],
+              color: ragdoll.skinColorHex,
+              originalColor: ragdoll.skinColorHex,
+              active: true,
+              mesh: cylSeg1Mesh,
+              isContour: false,
+              isGenitalBlock: true,
+              gridIndex: [ix + 1, 1, iz + 1]
+            });
+
+            // Cylinder column for Segment 2
+            const cylSeg2Geom = new THREE.CylinderGeometry(colRadius, colRadius, segmentLength, 12, 1);
+            const cylSeg2Mesh = new THREE.Mesh(cylSeg2Geom, skinMat);
+            cylSeg2Mesh.position.set(colX, -2.5 * segmentLength, colZ);
+            cylSeg2Mesh.name = `male_shaft_col_cyl_2_${ix}_${iz}`;
+            cylSeg2Mesh.renderOrder = 16;
+            seg2.add(cylSeg2Mesh);
+
+            pelvis.voxelBlocks.push({
+              id: `genital_male_shaft_col_cylinder_2_${ix}_${iz}_block`,
+              localPos: new THREE.Vector3(colX, -2.5 * segmentLength + rootY, colZ + genitalFrontZ),
+              size: [shaftW / 3, segmentLength, shaftD / 3],
+              color: ragdoll.skinColorHex,
+              originalColor: ragdoll.skinColorHex,
+              active: true,
+              mesh: cylSeg2Mesh,
+              isContour: false,
+              isGenitalBlock: true,
+              gridIndex: [ix + 1, 2, iz + 1]
+            });
+          }
+        }
+
+        // 4. Glans voxels (Glande)
+        const glansLength = 0.046 * pinkSizeMultiplier;
+        const glansW = 0.042 * pinkSizeMultiplier;
+        const glansD = 0.042 * pinkSizeMultiplier;
+        const nG = 2;
+
+        for (let ix = -1; ix <= 1; ix++) {
+          for (let ig = 0; ig < nG; ig++) {
+            for (let iz = -1; iz <= 1; iz++) {
+              if (ix === 0 && iz === 0) continue;
+              const vxW = glansW / 3;
+              const vxH = glansLength / nG;
+              const vxD = glansD / 3;
+              const lx = ix * vxW;
+              const ly = -shaftLength - (ig + 0.5) * vxH; // Relative to pivot
+              const lz = iz * vxD; // Relative to pivot
+
+              const blockGeom = new THREE.BoxGeometry(vxW * 0.95, vxH * 0.95, vxD * 0.95);
+              const blockMesh = new THREE.Mesh(blockGeom, pinkMat);
+              blockMesh.position.set(lx, ly, lz);
+              blockMesh.renderOrder = 16;
+              blockMesh.name = 'male_glans_mesh';
+              erectionPivot.add(blockMesh);
+
+              pelvis.voxelBlocks.push({
+                id: `genital_male_glans_vox_${ix}_${ig}_${iz}`,
+                localPos: new THREE.Vector3(lx, ly + rootY, lz + genitalFrontZ),
+                size: [vxW, vxH, vxD],
+                color: 0xf43f5e,
+                originalColor: 0xf43f5e,
+                active: true,
+                mesh: blockMesh,
+                isContour: false,
+                isGenitalBlock: true,
+                gridIndex: [ix + 1, ig, iz + 1],
+              });
+            }
+          }
+        }
+
+        // Glans collar ring (Corona del glande) - vibrant pink transition ring
+        const collarGeom = new THREE.CylinderGeometry(glansW * 0.52, shaftW * 0.48, glansLength * 0.35, 16, 1);
+        const collarMesh = new THREE.Mesh(collarGeom, pinkMat);
+        collarMesh.position.set(0, -shaftLength + glansLength * 0.1, 0);
+        collarMesh.name = 'male_glans_collar_mesh';
+        collarMesh.renderOrder = 17;
+        erectionPivot.add(collarMesh);
+
+        pelvis.voxelBlocks.push({
+          id: 'genital_male_glans_collar_block',
+          localPos: new THREE.Vector3(0, -shaftLength + glansLength * 0.1 + rootY, genitalFrontZ),
+          size: [glansW * 1.1, glansLength * 0.35, glansD * 1.1],
+          color: 0xf43f5e,
+          originalColor: 0xf43f5e,
+          active: true,
+          mesh: collarMesh,
+          isContour: false,
+          isGenitalBlock: true,
+          gridIndex: [0, 0, 0]
+        });
+
+        const glansSphereSize = Math.max(glansW, glansLength, glansD) * 1.25;
+        const glansPseudo = createPseudo3DContourMesh(
+          'male_glans',
+          glansSphereSize,
+          glansSphereSize,
+          glansSphereSize,
+          ragdoll.sphericalContourLevel,
+          0xf43f5e
+        );
+        glansPseudo.name = 'male_glans_pseudo';
+        glansPseudo.position.set(0, -shaftLength - glansLength / 2, 0); // Relative to pivot
+        glansPseudo.renderOrder = 17;
+        if (glansPseudo.material instanceof THREE.MeshStandardMaterial) {
+          glansPseudo.material.polygonOffset = true;
+          glansPseudo.material.polygonOffsetFactor = -1.0;
+          glansPseudo.material.polygonOffsetUnits = -1.0;
+          glansPseudo.material.color.setHex(0xf43f5e);
+        }
+        if (!glansPseudo.userData.holes) glansPseudo.userData.holes = [];
+        glansPseudo.userData.holes.push({
+          pos: new THREE.Vector3(0, -glansLength / 2, 0),
+          dir: new THREE.Vector3(0, 1, 0), // Carves inward into glans tip interior
+          radius: 0.018,
+          depth: 0.04,
+          colorHex: 0xbe123c,
+        });
+        applySphericalMorph(glansPseudo, ragdoll.sphericalContourLevel, pelvis, ragdoll);
+        erectionPivot.add(glansPseudo);
+
+        // Connect the final shaft segment 2 to the glans with a tapering cylinder
+        const cylGlansGeom = new THREE.CylinderGeometry(shaftW * 0.48, glansW * 0.52, glansLength / 2, 16, 1);
+        const cylGlans = new THREE.Mesh(cylGlansGeom, pinkMat);
+        cylGlans.position.set(0, -shaftLength - glansLength / 4, 0);
+        cylGlans.name = 'male_shaft_cyl_glans';
+        cylGlans.renderOrder = 16;
+        erectionPivot.add(cylGlans);
+
+        pelvis.voxelBlocks.push({
+          id: 'genital_male_shaft_cylinder_glans_block',
+          localPos: new THREE.Vector3(0, -shaftLength - glansLength / 4 + rootY, genitalFrontZ),
+          size: [shaftW, glansLength / 2, shaftD],
+          color: 0xf43f5e,
+          originalColor: 0xf43f5e,
+          active: true,
+          mesh: cylGlans,
+          isContour: false,
+          isGenitalBlock: true,
+          gridIndex: [0, 0, 0]
+        });
+
+        // Apply initial erection state
+        const targetRot = -(Math.PI / 2 + 0.6) * (ragdoll.erectionLevel || 0);
+        erectionPivot.rotation.x = targetRot;
